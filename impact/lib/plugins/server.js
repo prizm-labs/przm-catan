@@ -11,6 +11,15 @@ ig.module(
 .defines(function() {
     Server = ig.Class.extend({
         clients: { },
+
+        // tracking client details
+        config: {
+            maxPlayers: 4 
+        },
+        clientCount: 0,
+        boardClient: null,
+        playerClients: [],
+
         init: function() {
             var self = this;
             ig.io.sockets.on('connection', function(socket) {
@@ -55,12 +64,24 @@ ig.module(
             socket.input = new ig.Input();
             socket.screen = { x: 0, y: 0 };
             ig.latency(socket);
-            // Send the client all the active entities
-            var self = this;
-            ig.game.entities.forEach(function(ent) {
-                self.entityCreate(ent.classType, ent.pos.x, ent.pos.y, ent._settings, socket);
-                self.entityMove(ent, socket);
-            });
+
+            // serve "full gameboard" client to browser of board device
+            // serve "user actions" client to browser of mobile device
+            this.clientCount = Object.keys(this.clients).length;
+            console.log(this.clientCount);
+
+            if (this.clientCount==1) {
+                // present the full gameboard screen
+
+                // Send the client all the active entities
+                var self = this;
+                ig.game.entities.forEach(function(ent) {
+                    self.entityCreate(ent.classType, ent.pos.x, ent.pos.y, ent._settings, socket);
+                    self.entityMove(ent, socket);
+                });
+            } 
+
+            
             this.broadcast('client.connect', { id: socket.id });
         },
         clientReconnected: function(socket) { 

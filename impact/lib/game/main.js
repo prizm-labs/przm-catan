@@ -6,7 +6,13 @@ ig.module(
     'game.levels.field',
     'game.entities.player',
     'game.entities.drone',
-    'game.entities.terrain'
+    'game.entities.terrain',
+    'game.entities.terrainDesert',
+    'game.entities.terrainFields',
+    'game.entities.terrainForest',
+    'game.entities.terrainHills',
+    'game.entities.terrainMountains',
+    'game.entities.terrainPasture'
 )
 .defines(function() {
 
@@ -16,13 +22,25 @@ ig.module(
 
     });
 
-    MyGame = GameClient.extend({
+    ClientFullBoard = GameClient.extend({
+        init: function() {
+            //this.loadLevel(LevelField);
+        }
+    });
+
+    ClientPlayerHand = GameClient.extend({
         init: function() {
             this.loadLevel(LevelField);
         }
     });
 
-    ig.main('#canvas', MyGame, 60, 1080, 1080, 1);
+    // serve "full gameboard" client to browser of board device
+    // serve "user actions" client to browser of mobile device
+
+    console.log('client presenting screen...');
+    
+
+    ig.main('#canvas', ClientFullBoard, 60, 1080, 1080, 1);
     ig.system.setClient(MyClient);
 
 });

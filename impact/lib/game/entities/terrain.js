@@ -6,6 +6,7 @@ ig.module('game.entities.terrain')
 .defines(function() {
 
     EntityTerrain = EntityClient.extend({
+        //name: 'terrain',
         animSheet: new ig.AnimationSheet('media/sprites/terrain-desert.png', Atlas.entities.terrain.size.x, Atlas.entities.terrain.size.y),
         init: function(x, y, settings) {
             this.parent(x, y, settings);
@@ -15,5 +16,4 @@ ig.module('game.entities.terrain')
 
         }
     });
-
 });
