@@ -183,13 +183,13 @@ ig.module(
                 player.setName(playerData.name);
 
                 player.generateCardPositions(16, 'hand', ZONES.hand );
-                player.showCardPositions('hand');
+                player.hideCardPositions('hand');
 
                 player.generateCardPositions(8, 'field',ZONES.field );
-                player.showCardPositions('field');
+                player.hideCardPositions('field');
 
                 player.generateCardPositions(2, 'badges',ZONES.badges );
-                player.showCardPositions('badges');
+                player.hideCardPositions('badges');
 
                 self.players.push(player);
 
@@ -209,13 +209,136 @@ ig.module(
             },
 
             render: function() {
-
-                var self = this;
-
                 //TODO load game from cache
 
                 //TODO if no gameState cache
                 this.setupNewGame();
+
+                this.demo();
+            },
+            demo: function(){
+
+                var self = this;
+
+                _.each(playerConfig,this.addPlayer.bind(this));
+
+                var player = this.players[2];
+
+
+                var boardState = {
+                    pieces: [
+                        {
+                            type: 'road',
+                            owner: 0,
+                            location: this.terrain[5].getEdge(0)
+                        },
+                        {
+                            type: 'settlement',
+                            owner: 0,
+                            location: this.terrain[5].getVertex(0)
+                        },
+                        {
+                            type: 'road',
+                            owner: 1,
+                            location: this.terrain[10].getEdge(0)
+                        },
+                        {
+                            type: 'settlement',
+                            owner: 1,
+                            location: this.terrain[10].getVertex(0)
+                        },
+                        {
+                            type: 'road',
+                            owner: 2,
+                            location: this.terrain[12].getEdge(0)
+                        },
+                        {
+                            type: 'settlement',
+                            owner: 2,
+                            location: this.terrain[12].getVertex(0)
+                        },
+                        {
+                            type: 'settlement',
+                            owner: 2,
+                            location: this.terrain[0].getVertex(5)
+                        },
+                        {
+                            type: 'settlement',
+                            owner: 2,
+                            location: this.terrain[0].getVertex(1)
+                        },
+                        {
+                            type: 'settlement',
+                            owner: 2,
+                            location: this.terrain[2].getVertex(0)
+                        },
+                        {
+                            type: 'settlement',
+                            owner: 2,
+                            location: this.terrain[6].getVertex(2)
+                        },
+                        {
+                            type: 'road',
+                            owner: 3,
+                            location: this.terrain[17].getEdge(0)
+                        },
+                        {
+                            type: 'settlement',
+                            owner: 3,
+                            location: this.terrain[17].getVertex(0)
+                        }
+                    ]
+                };
+
+
+
+
+                //player.moveRobber(this.robber,this.terrain[5]);
+
+                //player.buildSettlement(terrain.getVertex(0));
+                //player.buildRoad(terrain.getEdge(0));
+
+                _.each(boardState.pieces,function(piece){
+                    var player = self.players[piece.owner];
+
+                    switch(piece.type){
+                        case 'road':
+                            player.buildRoad(piece.location);
+                            break;
+                        case 'settlement':
+                            player.buildSettlement(piece.location);
+                            break;
+                    }
+                });
+
+
+                //player.buildCity(player.getPieces("settlement")[0]);
+
+                //player.buildRoad(terrain.getEdge(1));
+//        player.buildSettlement(terrain.getVertex(2));
+//        player.buildCity(player.getPieces("settlement")[0]);
+
+                //TODO player rolls dice
+
+//        this.produceResources(8);
+//        this.produceResources(4);
+//        this.produceResources(6);
+//        this.produceResources(3);
+
+                //seed player inventory
+                _.each(this.players,function(player){
+
+                    var payouts = [
+                        { player: player, count:2, type:'brick', origin:player.getLocation('origin') },
+                        { player: player, count:4, type:'ore', origin:player.getLocation('origin') },
+                        { player: player, count:2, type:'wheat', origin:player.getLocation('origin') },
+                        { player: player, count:2, type:'sheep', origin:player.getLocation('origin') },
+                        { player: player, count:2, type:'wood', origin:player.getLocation('origin') }
+                    ];
+
+                    self.dealResourceCards(payouts);
+
+                });
             },
 
             setupBank: function(){
@@ -326,6 +449,10 @@ ig.module(
 
                 this.setupPlayers({playerCount:4});
 
+                this.setupRobber();
+            },
+
+            setupRobber: function(){
                 var location = this.desert.getOrigin();
                 var entity = ig.game.spawnEntity(EntityRobber, location.x, location.y);
                 var robber = new Robber(pieceId,entity);

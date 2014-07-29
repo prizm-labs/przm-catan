@@ -241,6 +241,11 @@ ig.module('game.classes.player')
 
                     });
                 },
+                hideCardPositions: function( locationKey ) {
+                    _.each(_locations[locationKey], function(location){
+                        location.hide();
+                    });
+                },
                 createLocation: function( position, locationKey ){
                     var cardLocations = _locations[locationKey];
 

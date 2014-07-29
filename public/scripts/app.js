@@ -63,6 +63,13 @@ define(["host","player"], function(Host,Player) {
             App.showInitScreen();
             App.bindEvents();
 
+           //set first client as Host
+            //if empty game session
+            if (App.gameId==0){
+                App.Host.onCreateClick();
+            } else {
+                App.Player.onJoinClick();
+            }
 
             // Initialize the fastclick library
             FastClick.attach(document.body);
